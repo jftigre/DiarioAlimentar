@@ -12,4 +12,4 @@ services:
     expose:
       - '3306'
     volumes:
-      - /Users/JT/Documents/Developer/DailyDietAPI
+      - ./mysql_data:/var/lib/mysql
