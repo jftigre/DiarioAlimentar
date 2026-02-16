@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from database import db
 from models.meal import Meal
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -9,7 +10,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://admin:admin123@127.0.0.
 
 db.init_app(app)
 
-@app.route("/meals", methods=['POST'])
+@app.route('/meals', methods=['POST'])
 def create_meal():
     data = request.get_json()
     
@@ -27,9 +28,24 @@ def create_meal():
         )
         db.session.add(new_meal)
         db.session.commit()
-        return jsonify({"message": "Alimentação cadastrada com sucesso"}), 201
+        return jsonify({"message": "Alimentação cadastrada com sucesso"})
 
     return jsonify({"message": "Dados inválidos"}), 400
+
+@app.route('/meals/<int:id>', methods=['PUT'])
+def uptade_meal(id):
+    data = request.get_json()
+    meal = Meal.query.get(id)
+
+    if meal and all(key in data for key in ["name", "description", "datetime", "is_diet"]):
+        meal.name = data.get("name")
+        meal.description = data.get("description")
+        meal.datetime = datetime.fromisoformat(data["datetime"])
+        meal.is_diet = data.get("is_diet")
+        db.session.commit()
+        return jsonify({"message": "Refeição atualizada com sucesso!"})
+    
+    return jsonify({"message":"Dados inválidos"}), 400
 
 if __name__ == "__main__":
     with app.app_context():
