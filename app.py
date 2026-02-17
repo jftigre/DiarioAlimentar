@@ -47,6 +47,17 @@ def uptade_meal(id):
     
     return jsonify({"message":"Dados inválidos"}), 400
 
+@app.route('/meals/<int:id>', methods=['DELETE'])
+def delete_meal(id):
+    meal = Meal.query.get(id)
+
+    if not meal:
+        return jsonify({"message": "Refeição não encontrada!"}), 404
+    
+    db.session.delete(meal)
+    db.session.commit()
+    return jsonify({"message": "Refeição deletada com sucesso!"})
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
