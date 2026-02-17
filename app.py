@@ -59,10 +59,19 @@ def delete_meal(id):
     return jsonify({"message": "Refeição deletada com sucesso!"})
 
 @app.route('/meals', methods=['GET'])
-def read_meal():
+def read_meals():
     meals = Meal.query.all()
     meals_list = [meal.to_dict() for meal in meals]
     return jsonify(meals_list)
+
+@app.route('/meals/<int:id>/', methods=['GET'])
+def read_meal(id):
+    meal = Meal.query.get(id)
+
+    if meal:
+        return jsonify(meal.to_dict())
+    
+    return jsonify({"message": "Refeição não encontrada!"}), 404
 
 if __name__ == "__main__":
     with app.app_context():
